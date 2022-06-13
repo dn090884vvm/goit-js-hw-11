@@ -105,6 +105,7 @@ async function getDatas(searchword) {
         'We have already reached the end of the collection'
       );
       refs.continuouButton.classList.add('hidden');
+      page = 0;
     }
     page += 1;
     return response;
