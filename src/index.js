@@ -79,11 +79,21 @@ async function getDatas(searchword) {
       `${API}/?key=${API_KEY}&q=${wordForSearch}&image_type=${IMAGE_TYPE}&orientation=${ORIENTATION}&safesearch=${SAFE_SEARCH}&page=${page}&per_page=${PER_PAGE}`
     );
 
-    if (response.data.totalHits > 0) {
+    if (page === 1 && response.data.totalHits > 0) {
       Notiflix.Notify.success(
         `Hooray! We found ${response.data.totalHits} images`
       );
       refs.continuouButton.classList.remove('hidden');
+    }
+
+    if (
+      page >= response.data.totalHits / PER_PAGE &&
+      response.data.totalHits > 0
+    ) {
+      Notiflix.Notify.warning(
+        'We have already reached the end of the collection'
+      );
+      refs.continuouButton.classList.add('hidden');
     }
 
     if (response.data.hits.length === 0) {
