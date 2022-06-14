@@ -79,21 +79,22 @@ async function getDatas(searchword) {
       `${API}/?key=${API_KEY}&q=${wordForSearch}&image_type=${IMAGE_TYPE}&orientation=${ORIENTATION}&safesearch=${SAFE_SEARCH}&page=${page}&per_page=${PER_PAGE}`
     );
 
-    if (page === 1) {
+    if (response.data.totalHits > 0) {
       Notiflix.Notify.success(
         `Hooray! We found ${response.data.totalHits} images`
       );
       refs.continuouButton.classList.remove('hidden');
     }
 
+    if (response.data.hits.length === 0) {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again'
+      );
+      return;
+    }
     console.log(page);
     console.log(response.data.totalHits / PER_PAGE);
-    if (page >= response.data.totalHits / PER_PAGE) {
-      Notiflix.Notify.warning(
-        'We have already reached the end of the collection'
-      );
-      refs.continuouButton.classList.add('hidden');
-    }
+
     page += 1;
     // console.log(response);
     return response;
