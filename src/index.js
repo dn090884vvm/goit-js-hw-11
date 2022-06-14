@@ -21,55 +21,39 @@ const SAFE_SEARCH = true;
 const PER_PAGE = 100;
 let page = 1;
 
-// const string = `${API}/?key=${API_KEY}&q=cats&image_type=${IMAGE_TYPE}&orientation=${ORIENTATION}&safesearch=${SAFE_SEARCH}`;
-// console.log(string);
-// console.log(refs.inputForm);
-// console.log(refs.inputField.name);
-// console.log(refs.searchButton);
-
 refs.inputForm.addEventListener('submit', showImages);
 refs.continuouButton.addEventListener('click', addingNewImages);
 
-function addingNewImages(event) {
-  event.preventDefault();
+function showImages(event) {
+  resetPageCount();
 
-  //   clearMarkup();
-  //   Notiflix.Notify.success('Sol lucet omnibus');
-  const requestValue = refs.inputField.value;
-  //   console.log(requestValue);
-  getDatas(requestValue).then(response => {
-    receivedDatas(response);
-  });
+  clearMarkup();
+  gettingImages(event);
 }
 
-function showImages(event) {
+function addingNewImages(event) {
+  gettingImages(event);
+}
+
+function gettingImages(event) {
   event.preventDefault();
-  clearMarkup();
-  //   Notiflix.Notify.success(`Hooray! We found ${response.totalHits} images`);
+
   const requestValue = refs.inputField.value;
-  //   console.log(requestValue);
-  getDatas(requestValue).then(response => {
-    receivedDatas(response);
-  });
+
+  getDatas(requestValue)
+    .then(response => {
+      receivedDatas(response);
+    })
+    .catch(error => console.log(error.message));
 }
 
 function receivedDatas(response) {
-  //   if (page >= response.data.totalHits / PER_PAGE) {
-  //     Notiflix.Notify.warning(
-  //       'We have already reached the end of the collection'
-  //     );
-  //     return;
-  //   }
-  const countImages = response.data.hits.length;
+  // const countImages = response.data.hits.length;
   const picturesArray = response.data.hits;
-  renderGallery(picturesArray);
-  //   console.log(response.data.totalHits);
-  //   console.log(response.data.hits.length);
-  //   if (response.data.hits.length !== 0) {
-  //     refs.continuouButton.classList.remove('hidden');
-  //     }
 
-  console.log(response);
+  renderGallery(picturesArray);
+  pageScroll();
+  // console.log(response);
 }
 
 const axios = require('axios');
@@ -86,12 +70,7 @@ async function getDatas(searchword) {
     const response = await axios.get(
       `${API}/?key=${API_KEY}&q=${wordForSearch}&image_type=${IMAGE_TYPE}&orientation=${ORIENTATION}&safesearch=${SAFE_SEARCH}&page=${page}&per_page=${PER_PAGE}`
     );
-    // console.log(response.data.hits);
-    // console.log(response.data.totalHits);
-    // console.log(response.data.hits.length);
-    // const pictureArray = response.data.hits;
 
-    // return pictureArray;
     if (page === 1) {
       Notiflix.Notify.success(
         `Hooray! We found ${response.data.totalHits} images`
@@ -105,23 +84,17 @@ async function getDatas(searchword) {
         'We have already reached the end of the collection'
       );
       refs.continuouButton.classList.add('hidden');
-      page = 0;
     }
     page += 1;
-    return response;
-
-    // console.log(pictureArray);
-    // const cards = pictureArray
-    //   .map(({ pageURL }) => {
-    //     return `<li>${pageURL}</li>`;
-    //   })
-    //   .join('');
-    // console.log(cards);
-    // return response;
     // console.log(response);
+    return response;
   } catch (error) {
     console.error(error);
   }
+}
+
+function resetPageCount() {
+  page = 1;
 }
 
 function renderGallery(pictureArray) {
@@ -171,7 +144,14 @@ function renderGallery(pictureArray) {
 function clearMarkup() {
   refs.galleryItems.innerHTML = '';
 }
-// console.log(getUser());
-// getUser().then(result => console.log(result.config.url));
 
-// Make a request for a user with a given ID
+function pageScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 30,
+    behavior: 'smooth',
+  });
+}
