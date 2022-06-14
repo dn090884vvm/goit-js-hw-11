@@ -21,6 +21,14 @@ const SAFE_SEARCH = true;
 const PER_PAGE = 100;
 let page = 1;
 
+function checkingPage() {
+  if (page === 1) {
+    refs.continuouButton.classList.add('hidden');
+  }
+}
+
+checkingPage();
+
 refs.inputForm.addEventListener('submit', showImages);
 refs.continuouButton.addEventListener('click', addingNewImages);
 
@@ -75,8 +83,9 @@ async function getDatas(searchword) {
       Notiflix.Notify.success(
         `Hooray! We found ${response.data.totalHits} images`
       );
+      refs.continuouButton.classList.remove('hidden');
     }
-    refs.continuouButton.classList.remove('hidden');
+
     console.log(page);
     console.log(response.data.totalHits / PER_PAGE);
     if (page >= response.data.totalHits / PER_PAGE) {
