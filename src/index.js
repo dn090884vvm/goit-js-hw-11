@@ -18,7 +18,7 @@ const API_KEY = '28022649-289628139dcfe0cc9a597312e';
 const IMAGE_TYPE = 'photo';
 const ORIENTATION = 'horizontal';
 const SAFE_SEARCH = true;
-const PER_PAGE = 100;
+const PER_PAGE = 40;
 let page = 1;
 
 function checkingPage() {
@@ -33,6 +33,11 @@ refs.inputForm.addEventListener('submit', showImages);
 refs.continuouButton.addEventListener('click', addingNewImages);
 
 function showImages(event) {
+  if (!refs.continuouButton.classList.contains('hidden') && page > 1) {
+    refs.continuouButton.classList.add('hidden');
+    // console.log(refs.continuouButton);
+  }
+
   resetPageCount();
 
   clearMarkup();
